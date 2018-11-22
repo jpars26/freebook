@@ -42,7 +42,7 @@ font-size: 16px;"> Last access : 30 May 2014 &nbsp; <a href="/admin/logout" clas
 
 
         <li>
-          <a class="active-menu"  href="/views/res/admin/index.html"><i class="fa fa-dashboard fa-3x"></i> Dashboard</a>
+          <a class="active-menu"  href="/admin/users"><i class="fa fa-dashboard fa-3x"></i> Dashboard</a>
         </li>
         <li>
           <a  href="/views/res/admin/ui.html"><i class="fa fa-desktop fa-3x"></i> UI Elements</a>
