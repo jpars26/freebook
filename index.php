@@ -49,8 +49,12 @@ $app->get('/admin/logout',function(){
 
 $app->get('/admin/users',function(){
     User::verifyLogin();
+    $users = User::listAll();
     $page = new PageAdmin();
-    $page->setTpl("users");
+    $page->setTpl("users",array(
+        "users"=>$users
+    ));
+
 });
 
 $app->get('/admin/users/create',function(){
@@ -59,24 +63,60 @@ $app->get('/admin/users/create',function(){
     $page->setTpl("users-create");
 });
 
-$app->get('/admin/users/:iduser',function($iduser){
+$app->get('/admin/users/:iduser/delete',function($ID){
     User::verifyLogin();
+    $user = new User();
+    $user->get((int)$ID);
+    $user->delete();
+
+    header("Location: /admin/users");
+    exit;
+
+});
+
+$app->get('/admin/users/:ID',function($iduser){
+    User::verifyLogin();
+    $user = new User();
+    $user->get((int)$iduser);
     $page = new PageAdmin();
-    $page->setTpl("users-update");
+    $page->setTpl("users-update", array(
+        "user"=>$user->getValues()
+    ));
 });
 
-$app->post('/admin/users/create',function(){
+$app->post("/admin/users/create", function () {
+
     User::verifyLogin();
+    $user = new User();
+
+    $_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 1;
+
+    $_POST['password'] = password_hash($_POST["password"], PASSWORD_DEFAULT, [
+
+        "cost"=>12
+
+    ]);
+
+    $user->setData($_POST);
+
+    $user->save();
+
+    header("Location: /admin/users");
+    exit;
 
 });
 
-$app->post('/admin/users/:iduser',function($iduser){
-    User::verifyLogin();
 
-});
-
-$app->delete('/admin/users/:iduser',function($iduser){
+$app->post('/admin/users/:ID',function($ID){
     User::verifyLogin();
+    $user = new User();
+    $_POST["inadmin"] = (isset($_POST["inadmin"])) ? 1 : 1;
+    $user->get((int)$ID);
+    $user->setData($_POST);
+    $user->update();
+      header("Location: /admin/users");
+    exit;
+
 
 });
 

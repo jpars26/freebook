@@ -35,7 +35,7 @@ class User extends Model{
             ||
             !$_SESSION[User::SESSION]
             ||
-            !(int)$_SESSION[User::SESSION]["ID_ADMIN"] > 0
+            !(int)$_SESSION[User::SESSION]["ID"] > 0
             ||
             (bool)$_SESSION[User::SESSION]["inadmin"] !== $inadmin
         ){
@@ -47,6 +47,60 @@ class User extends Model{
     public static function logout(){
         $_SESSION[User::SESSION] = NULL;
     }
+
+    public static function listAll(){
+    	$sql = new Sql();
+    	return $sql->select("SELECT * FROM administrador");
+    }
+
+    public function save(){
+    	$sql = new Sql();
+    	$results = $sql->select("CALL sp_users_save(:NOME, :ENDERECO, :TELEFONE, :EMAIL, :password, :login, :inadmin)", array(
+    		":NOME"=>$this->getNOME(),
+    		":ENDERECO"=>$this->getENDERECO(),
+    		":TELEFONE"=>$this->getTELEFONE(),
+    		":EMAIL"=>$this->getEMAIL(),
+    		":password"=>$this->getpassword(),
+    		":login"=>$this->getlogin(),
+    		":inadmin"=>$this->getinadmin()
+    	));
+		$this->setData($results[0]);
+    
+}
+
+public function get($iduser){
+	$sql = new Sql();
+	$results = $sql->select("SELECT * FROM administrador where ID = :iduser",array(
+		":iduser"=>$iduser
+	));		
+	$this->setData($results[0]);
+}
+
+public function update(){
+    	$sql = new Sql();
+    	$results = $sql->select("CALL sp_update_save(:ID, :NOME, :ENDERECO, :TELEFONE, :EMAIL, :password, :login, :inadmin)", array(
+    		":ID"=>$this->getID(),
+    		":NOME"=>$this->getNOME(),
+    		":ENDERECO"=>$this->getENDERECO(),
+    		":TELEFONE"=>$this->getTELEFONE(),
+    		":EMAIL"=>$this->getEMAIL(),
+    		":password"=>$this->getpassword(),
+    		":login"=>$this->getlogin(),
+    		":inadmin"=>$this->getinadmin()
+    	));
+		$this->setData($results[0]);
+    
+}
+
+public function delete(){
+    $sql = new Sql();
+    $sql->query("CALL sp_users_delete(:ID)",array(
+        ":ID"=>$this->getID()
+    ));
+
+}
+
+
 }
 
 ?>
